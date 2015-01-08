@@ -1,0 +1,47 @@
+# a quick way to get out of current directory
+alias ..='cd ..'
+alias .2='cd ../../'
+alias .3='cd ../../../'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../../'
+alias .6='cd ../../../../../../'
+alias .7='cd ../../../../../../../'
+alias .8='cd ../../../../../../../../'
+
+# be nice
+alias please=sudo
+# euh.. nevermind
+alias fuck='sudo $(history -p '!!')'
+
+# List only directories
+alias lsd='ls -l | grep "^d"'
+# Recursive directory listing
+alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'''
+# Clear the screen and list file
+alias cls='clear;ls'
+
+# Recursively delete `.DS_Store` files
+alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
+
+# One of @janmoesen’s ProTip™s
+for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
+	alias "$method"="lwp-request -m '$method'"
+done
+
+# npm
+alias npmp="sudo npm publish"
+alias npma="sudo npm adduser"
+alias npmi="sudo npm install"
+alias npmg="sudo npm install -g"
+alias npmu="sudo npm update"
+alias npmr="sudo npm uninstall"
+alias npmrg="sudo npm uninstall -g"
+# npm offline
+# install npm dependencies from cache
+alias npmo="sudo npm install --cache-min 999999999"
+
+alias poogle='ping google.com'
+alias myip='curl ip.appspot.com'
+alias mykernel='uname -r'
+alias hist='history | grep '
+alias passwdgen='dd if=/dev/random bs=16 count=1 2>/dev/null | base64 | sed 's/=//g''

@@ -1,0 +1,132 @@
+function mcd(){
+    mkdir -p "$1" && cd "$1";
+}
+
+function dl(){
+    cd $1 ; ls
+}
+
+# Copy w/ progress
+cp_p () {
+  rsync -WavP --human-readable --progress $1 $2
+}
+# Extract archives - use: extract <file>
+# Based on http://dotfiles.org/~pseup/.bashrc
+function extract() {
+	if [ -f "$1" ] ; then
+		local filename=$(basename "$1")
+		local foldername="${filename%%.*}"
+		local fullpath=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "$1"`
+		local didfolderexist=false
+		if [ -d "$foldername" ]; then
+			didfolderexist=true
+			read -p "$foldername already exists, do you want to overwrite it? (y/n) " -n 1
+			echo
+			if [[ $REPLY =~ ^[Nn]$ ]]; then
+				return
+			fi
+		fi
+		mkdir -p "$foldername" && cd "$foldername"
+		case $1 in
+			*.tar.bz2) tar xjf "$fullpath" ;;
+			*.tar.gz) tar xzf "$fullpath" ;;
+			*.tar.xz) tar Jxvf "$fullpath" ;;
+			*.tar.Z) tar xzf "$fullpath" ;;
+			*.tar) tar xf "$fullpath" ;;
+			*.taz) tar xzf "$fullpath" ;;
+			*.tb2) tar xjf "$fullpath" ;;
+			*.tbz) tar xjf "$fullpath" ;;
+			*.tbz2) tar xjf "$fullpath" ;;
+			*.tgz) tar xzf "$fullpath" ;;
+			*.txz) tar Jxvf "$fullpath" ;;
+			*.zip) unzip "$fullpath" ;;
+			*) echo "'$1' cannot be extracted via extract()" && cd .. && ! $didfolderexist && rm -r "$foldername" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
+}
+
+# Simple calculator
+function calc() {
+        local result=""
+        result="$(printf "scale=10;$*\n" | bc --mathlib | tr -d '\\\n')"
+        #                       └─ default (when `--mathlib` is used) is 20
+        #
+        if [[ "$result" == *.* ]]; then
+                # improve the output for decimal numbers
+                printf "$result" |
+                sed -e 's/^\./0./'        `# add "0" for cases like ".5"` \
+                    -e 's/^-\./-0./'      `# add "0" for cases like "-.5"`\
+                    -e 's/0*$//;s/\.$//'   # remove trailing zeros
+        else
+                printf "$result"
+        fi
+        printf "\n"
+}
+
+# Create a git.io short URL
+function gitio() {
+        if [ -z "${1}" -o -z "${2}" ]; then
+                echo "Usage: \`gitio slug url\`"
+                return 1
+        fi
+        curl -i http://git.io/ -F "url=${2}" -F "code=${1}"
+}
+
+# GitHub URL for current repo.
+function gurl(){
+  local remotename="${@:-origin}"
+  local remote="$(git remote -v | awk '/^'"$remotename"'.*\(push\)$/ {print $2}')"
+  [[ "$remote" ]] || return
+  local user_repo="$(echo "$remote" | perl -pe 's/.*://;s/\.git$//')"
+  echo "https://github.com/$user_repo"
+}
+
+# Launch installed browsers for a specific URL
+function browsers(){
+	chromium $1
+	opera $1
+	firefox $1
+}
+
+function repeat(){ 
+	local count="$1" i;
+	shift;
+	for i in $(seq 1 "$count");
+	do
+		eval "$@";
+	done
+}
+
+# Subfunction needed by `repeat'.
+function seq(){ 
+	local lower upper output;
+	lower=$1 upper=$2;
+	while [ $lower -le $upper ];
+	do
+		output="$output $lower";
+		lower=$[ $lower + 1 ];
+	done;
+	echo $output
+}
+
+function mp3(){
+    youtube-dl $1 --extract-audio --title --audio-format mp3
+}
+
+function headtails(){
+    [ -z "$2" ] && num='' || num="-n $2"
+    head ${num} $1
+    echo "..."
+    tail ${num} $1
+}
+
+# encode a given image file as base64 and output css background property to clipboard
+function 64enc(){
+    openssl base64 -in $1 | awk -v ext="${1#*.}" '{ str1=str1 $0 }END{ print "background:url(data:image/"ext";base64,"str1");" }'|pbcopy
+    echo "$1 encoded to clipboard"
+}
+
+
+
