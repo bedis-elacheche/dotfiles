@@ -23,5 +23,5 @@ for file in $files; do
     mv ~/.$dir/$file ~/.$file
 done
 
-# remove install.sh
 rm ~/.$dir/install.sh
+rm ~/.$dir/README.md
