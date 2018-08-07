@@ -10,7 +10,7 @@ My dotfiles config including
 ## Install
  
 * Go to your home directory: `cd ~`
-* Checkout the source: `git clone git@github.com:elacheche-bedis/dotfiles.git`.
+* Checkout the source: `git clone git@github.com:bedis-elacheche/dotfiles.git`.
 * Go to dotfiles directory: `cd dotfiles`
 * Make install.sh executable `chmod +x install.sh`
 * Run the script: `./install.sh`
